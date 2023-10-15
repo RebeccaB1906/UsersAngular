@@ -1,0 +1,46 @@
+<form class="search-bar">
+  <input type="number" #searchInput class="search-input" value="" placeholder="Search user id..." />
+  <proj-button (click)="searchUsers()" [label]="'Search'"></proj-button>
+</form>
+
+<ng-container *ngIf="vm$ | async as vm">
+  <ng-container *ngIf="vm.loadingUsers; else loaded">
+    <div class="d-flex justify-content-center m-5">
+      <div class="spinner-border" role="status">
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #loaded>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let user of vm.students">
+          <tr>
+            <td> {{user.name}} </td>
+            <td> {{user.email}}</td>
+            <td> {{user.address.street}} <br /> {{user.address.suite}} <br /> {{user.address.city}}<br />
+              {{user.address.zipcode}}</td>
+            <td>
+              <proj-button (click)="retrieveUserPost(user.id)" [label]="'Retrieve User Posts'"></proj-button>
+              <proj-button *ngIf="user.posts?.length" (click)="removeUserPost(user.id)" [label]="'Remove User Posts'"></proj-button>
+            </td>
+          </tr>
+          <tr *ngIf="user.posts?.length">
+            <td *ngFor="let post of user.posts | slice:0:4">
+              <span class="type-bold">{{ post.title }}</span>
+              <span class="type-small">{{ post.body}}</span>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <proj-button (click)="resetUsers()" [label]="'Reset Users'"></proj-button>
+  </ng-template>
+</ng-container>
